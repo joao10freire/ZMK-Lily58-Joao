@@ -1,24 +1,26 @@
-name: ZMK Firmware Build
+name: Build ZMK Firmware
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "main" ]
-  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          submodules: recursive
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v22
+        uses: cachix/install-nix-action@v25
+        with:
+          nix_path: nixpkgs=channel:nixos-24.05
 
-      - name: Enter Nix devShell
+      - name: Init + Update + Build (Left + Right)
         run: |
           nix develop --command bash -c "
             echo '--- INITIALIZING WEST WORKSPACE ---'
@@ -40,10 +42,10 @@ jobs:
               -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
           "
 
-      - name: Upload firmware artifacts
-        uses: actions/upload-artifact@v3
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: firmware
+          name: firmwares
           path: |
-            build/left/zephyr/zmk.uf2
-            build/right/zephyr/zmk.uf2
+            build/left/zephyr/*.uf2
+            build/right/zephyr/*.uf2
