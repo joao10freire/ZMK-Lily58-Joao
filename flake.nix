@@ -1,43 +1,32 @@
 {
-  description = "ZMK firmware for Lily58 Joao";
+  description = "ZMK firmware for Lily58";
 
   inputs = {
-    # Usa a única branch do ZMK que possui flake.nix
-    zmk.url = "github:zmkfirmware/zmk/feat/bluetooth-rewrite";
+    # Usa a branch main oficial
+    zmk.url = "github:zmkfirmware/zmk/main";
 
-    # Versão estável do NixOS com pacotes modernos
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    # Nixpkgs estável
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, zmk, nixpkgs, ... }:
-    let
-      # Ambiente para GitHub Actions (x86_64-linux)
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+  outputs = { self, nixpkgs, flake-utils, zmk }:
+    flake-utils.lib.simpleFlake {
+      inherit self nixpkgs;
+      name = "zmk-lily58";
 
-    in {
-      # Ambiente de desenvolvimento usado pelo GitHub Actions
-      devShells = {
-        zmk = pkgs.mkShell {
+      shell = { pkgs }:
+        pkgs.mkShell {
           nativeBuildInputs = [
-            # Ferramentas do ZMK
-            zmk.packages.x86_64-linux.toolchain
-            zmk.packages.x86_64-linux.zephyr-sdk
-
-            # Dependências necessárias do Zephyr
             pkgs.cmake
+            pkgs.gcc
+            pkgs.git
+            pkgs.west
+            pkgs.dt-schema
+            pkgs.zephyr-sdk
             pkgs.ninja
-            pkgs.dtc
-
-            # ARM toolchain
-            pkgs.gcc-arm-embedded
-
-            # Python para west
             pkgs.python3
           ];
         };
-      };
-
-      # Exporta outputs do ZMK
-      packages = zmk.packages;
     };
 }
