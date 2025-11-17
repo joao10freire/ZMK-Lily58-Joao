@@ -3,28 +3,29 @@ name: Build ZMK Firmware
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
       - name: Install Nix
         uses: cachix/install-nix-action@v25
+        with:
+          nix_path: nixpkgs=channel:nixos-24.05
 
-      - name: Init west workspace
+      - name: Initialize west workspace
         run: |
-          # initialize west workspace using the manifest in config/
           nix develop --command west init -l config
           nix develop --command west update
 
-      - name: Build Left Side (Feather nRF52840)
+      - name: Build LEFT side
         run: |
           nix develop --command west build \
             -s zmk/app \
@@ -32,13 +33,13 @@ jobs:
             -d build/left \
             -- -DSHIELD=lily58_joao_left -DZMK_CONFIG=$GITHUB_WORKSPACE/config
 
-      - name: Upload Left Firmware
+      - name: Upload LEFT .uf2
         uses: actions/upload-artifact@v4
         with:
-          name: lily58_left_feather
+          name: lily58_left
           path: build/left/zephyr/*.uf2
 
-      - name: Build Right Side (Feather nRF52840)
+      - name: Build RIGHT side
         run: |
           nix develop --command west build \
             -s zmk/app \
@@ -46,8 +47,8 @@ jobs:
             -d build/right \
             -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
 
-      - name: Upload Right Firmware
+      - name: Upload RIGHT .uf2
         uses: actions/upload-artifact@v4
         with:
-          name: lily58_right_feather
+          name: lily58_right
           path: build/right/zephyr/*.uf2
