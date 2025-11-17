@@ -1,5 +1,5 @@
 manifest:
-  version: "0.13"
+  version: 0.13
 
   remotes:
     - name: zmkfirmware
@@ -9,6 +9,12 @@ manifest:
     - name: zmk
       remote: zmkfirmware
       revision: main
+      path: zmk
+
+    - name: zephyr
+      url: https://github.com/zephyrproject-rtos/zephyr
+      revision: v3.5.0
+      import: true
 
   self:
     path: config
