@@ -20,32 +20,41 @@ jobs:
         with:
           nix_path: nixpkgs=channel:nixos-24.05
 
-      - name: Init + Update + Build (Left + Right)
+      - name: Enter devshell
+        run: nix develop --command echo "ZMK devshell ready."
+
+      - name: Initialize west workspace
         run: |
-          nix develop --command bash -c "
-            echo '--- INITIALIZING WEST WORKSPACE ---'
-            west init -l config
-            west update
+          echo '--- INITIALIZING WEST WORKSPACE ---'
+          nix develop --command west init -l config
+          nix develop --command west update
 
-            echo '--- BUILDING LEFT SIDE ---'
-            west build \
-              -s zmk/app \
-              -b adafruit_feather_nrf52840 \
-              -d build/left \
-              -- -DSHIELD=lily58_joao_left -DZMK_CONFIG=$GITHUB_WORKSPACE/config
+      - name: Build LEFT side
+        run: |
+          echo '--- BUILDING LEFT SIDE ---'
+          nix develop --command west build \
+            -s zmk/app \
+            -b adafruit_feather_nrf52840 \
+            -d build/left \
+            -- -DSHIELD=lily58_joao_left -DZMK_CONFIG=$GITHUB_WORKSPACE/config
 
-            echo '--- BUILDING RIGHT SIDE ---'
-            west build \
-              -s zmk/app \
-              -b adafruit_feather_nrf52840 \
-              -d build/right \
-              -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
-          "
-
-      - name: Upload artifacts
+      - name: Upload LEFT .uf2
         uses: actions/upload-artifact@v4
         with:
-          name: firmwares
-          path: |
-            build/left/zephyr/*.uf2
-            build/right/zephyr/*.uf2
+          name: lily58_left
+          path: build/left/zephyr/*.uf2
+
+      - name: Build RIGHT side
+        run: |
+          echo '--- BUILDING RIGHT SIDE ---'
+          nix develop --command west build \
+            -s zmk/app \
+            -b adafruit_feather_nrf52840 \
+            -d build/right \
+            -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
+
+      - name: Upload RIGHT .uf2
+        uses: actions/upload-artifact@v4
+        with:
+          name: lily58_right
+          path: build/right/zephyr/*.uf2
