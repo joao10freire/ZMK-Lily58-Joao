@@ -31,7 +31,6 @@
             pkgs.python3Packages.pyyaml
             pkgs.python3Packages.pillow
             pkgs.gcc-arm-embedded
-            pkgs.dt-toolchain
           ];
 
           ZMK_PATH = "${zmk}";
