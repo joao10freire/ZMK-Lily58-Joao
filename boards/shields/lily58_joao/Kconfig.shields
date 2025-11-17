@@ -1,0 +1,7 @@
+# Custom shield for Lily58 João
+config SHIELD_LILY58_JOAO
+    bool "Lily58 João (nRF52840 Feather-clone)"
+    select ZMK_KEYBOARD_SPLIT
+    select ZMK_RGB
+    select ZMK_RGB_UNDERGLOW
+    select ZMK_ROTARY_ENCODER

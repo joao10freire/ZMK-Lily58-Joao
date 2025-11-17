@@ -1,0 +1,53 @@
+name: Build ZMK Firmware
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v25
+        with:
+          nix_path: nixpkgs=channel:nixos-24.05
+
+      - name: Ensure flake compatibility
+        run: nix flake show .
+
+      - name: Init west workspace
+        run: |
+          nix develop .#zmk -c west init -l config
+          nix develop .#zmk -c west update
+
+      - name: Build Left Side
+        run: |
+          nix develop .#zmk -c west build -s zmk/app -d build/left \
+            -b adafruit_feather_nrf52840 \
+            -- -DSHIELD=lily58_joao_left -DZMK_CONFIG=$GITHUB_WORKSPACE/config
+
+      - name: Upload Left Firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: lily58_left
+          path: build/left/zephyr/*.uf2
+
+      - name: Build Right Side
+        run: |
+          nix develop .#zmk -c west build -s zmk/app -d build/right \
+            -b adafruit_feather_nrf52840 \
+            -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
+
+      - name: Upload Right Firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: lily58_right
+          path: build/right/zephyr/*.uf2

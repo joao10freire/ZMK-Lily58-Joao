@@ -1,0 +1,77 @@
+/ {
+    compatible = "zmk,keymap";
+
+    keymap {
+        layer_count = <4>;
+
+        base_layer {
+            bindings = <
+                &kp Q &kp W &kp E &kp R &kp T    &kp Y &kp U &kp I &kp O &kp P
+                &kp A &kp S &kp D &kp F &kp G    &kp H &kp J &kp K &kp L &kp SCLN
+                &kp Z &kp X &kp C &kp V &kp B    &kp N &kp M &kp COMM &kp DOT &kp SLSH
+
+                /* thumbs row example: LCtrl / Space / MO(numbers) */
+                &mo numbers_layer &kp LCTRL &kp SPC &mo symbols_layer
+            >;
+        };
+
+        numbers_layer {
+            bindings = <
+                &kp 1 &kp 2 &kp 3 &kp 4 &kp 5   &kp 6 &kp 7 &kp 8 &kp 9 &kp 0
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+            >;
+        };
+
+        symbols_layer {
+            bindings = <
+                &kp EXLM &kp AT &kp HASH &kp DLR &kp PERC  &kp CIRC &kp AMPR &kp ASTERISK &kp LPRN &kp RPRN
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+            >;
+        };
+
+        nav_layer {
+            bindings = <
+                &kp HOME &kp PGDN &kp PGUP &kp END &kp INS
+                &kp LEFT &kp DOWN &kp UP &kp RIGHT &kp DEL
+                &trans &trans &trans &trans &trans
+            >;
+        };
+    };
+
+    /* Encoders */
+    encoders {
+        compatible = "zmk,encoders";
+        enc_left: encoder_left {
+            binding = <&behaviour_encoder_increment &behaviour_encoder_decrement>;
+            press = <&behaviour_mute>;
+        };
+        enc_right: encoder_right {
+            binding = <&behaviour_encoder_scroll &behaviour_encoder_scroll>;
+            press = <&behaviour_page_up_down>;
+        };
+    };
+
+    /* Define simple behaviours */
+    behaviour_mute: mute {
+        compatible = "zmk,behavior";
+        label = "mute";
+    };
+    behaviour_encoder_increment: inc {
+        compatible = "zmk,behavior";
+        label = "enc_inc";
+    };
+    behaviour_encoder_decrement: dec {
+        compatible = "zmk,behavior";
+        label = "enc_dec";
+    };
+    behaviour_encoder_scroll: scroll {
+        compatible = "zmk,behavior";
+        label = "enc_scroll";
+    };
+    behaviour_page_up_down: pgup_pgdn {
+        compatible = "zmk,behavior";
+        label = "pgup_pgdn";
+    };
+};
