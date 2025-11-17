@@ -23,7 +23,7 @@ jobs:
 
       - name: Init west workspace
         run: |
-          nix develop --command west init
+          nix develop --command west init -l config
           nix develop --command west update
 
       - name: Build Left Side (Feather nRF52840)

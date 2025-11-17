@@ -1,36 +1,38 @@
 {
-  description = "ZMK firmware for Lily58 Joao";
+  description = "ZMK build environment for Lily58 João";
 
   inputs = {
-    # ZMK não é flake — precisa flake=false para funcionar
-    zmk = {
-      url = "github:zmkfirmware/zmk/main";
-      flake = false;
-    };
-
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
+    zmk.url = "github:zmkfirmware/zmk";
   };
 
   outputs = { self, nixpkgs, flake-utils, zmk }:
-    flake-utils.lib.simpleFlake {
-      inherit self nixpkgs;
-      name = "zmk-lily58";
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = import nixpkgs { inherit system; };
+      in {
+        devShells.default = pkgs.mkShell {
+          name = "zmk";
 
-      shell = { pkgs }:
-        pkgs.mkShell {
-          nativeBuildInputs = [
+          buildInputs = [
             pkgs.cmake
-            pkgs.git
-            pkgs.west
-            pkgs.ninja
-            pkgs.dt-schema
             pkgs.gcc
+            pkgs.gnumake
+            pkgs.ninja
+            pkgs.gcc-arm-embedded
+            pkgs.dt-toolchain
             pkgs.python3
-            pkgs.zephyr-sdk
+            pkgs.python3Packages.west
+            pkgs.python3Packages.pyelftools
+            pkgs.python3Packages.pyyaml
+            pkgs.python3Packages.pillow
+            pkgs.git
           ];
 
-          ZMK_PATH = "${zmk}";
+          shellHook = ''
+            echo "ZMK environment loaded!"
+          '';
         };
-    };
+      });
 }
