@@ -18,9 +18,11 @@ jobs:
       - name: Install Nix
         uses: cachix/install-nix-action@v25
 
+      - name: Show flake info
+        run: nix flake show .
+
       - name: Init west workspace
         run: |
-          # initialize west workspace using the manifest in config/
           nix develop --command west init -l config
           nix develop --command west update
 
