@@ -7,7 +7,15 @@ manifest:
     - name: zmk
       remote: zmk
       revision: v0.3.0
-      import: true
+      path: zmk
+
+    - name: zephyr
+      remote: zmk
+      revision: v0.3.0
+      path: zephyr
+
+    - name: zmk-config
+      path: config
 
   self:
     path: config
