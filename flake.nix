@@ -1,11 +1,13 @@
 {
-  description = "ZMK firmware for Lily58";
+  description = "ZMK firmware for Lily58 Joao";
 
   inputs = {
-    # Usa a branch main oficial
-    zmk.url = "github:zmkfirmware/zmk/main";
+    # ZMK não é flake — precisa flake=false para funcionar
+    zmk = {
+      url = "github:zmkfirmware/zmk/main";
+      flake = false;
+    };
 
-    # Nixpkgs estável
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
   };
@@ -19,14 +21,16 @@
         pkgs.mkShell {
           nativeBuildInputs = [
             pkgs.cmake
-            pkgs.gcc
             pkgs.git
             pkgs.west
-            pkgs.dt-schema
-            pkgs.zephyr-sdk
             pkgs.ninja
+            pkgs.dt-schema
+            pkgs.gcc
             pkgs.python3
+            pkgs.zephyr-sdk
           ];
+
+          ZMK_PATH = "${zmk}";
         };
     };
 }
