@@ -35,10 +35,8 @@
             # zephyr-sdk is sometimes heavy in nixpkgs; west will handle fetching Zephyr as configured by config/west.yml
           ];
 
-          # Helpful env var for scripts
-          ZMK_PATH = "${zmk}";
           shellHook = ''
-            echo "ZMK devshell ready (non-flake ZMK source) — ZMK_PATH=${ZMK_PATH}"
+            echo "ZMK devshell ready."
           '';
         };
       });
