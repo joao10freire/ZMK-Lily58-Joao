@@ -25,7 +25,7 @@ jobs:
 
       - name: Init west workspace
         run: |
-          nix develop .#zmk -c west init -l config
+          nix develop .#zmk -c west init -l .
           nix develop .#zmk -c west update
 
       - name: Build Left Side
