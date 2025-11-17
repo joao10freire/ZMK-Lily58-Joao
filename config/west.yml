@@ -1,21 +1,14 @@
 manifest:
+  version: "0.13"
+
   remotes:
-    - name: zmk
+    - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
 
   projects:
     - name: zmk
-      remote: zmk
-      revision: v0.3.0
-      path: zmk
-
-    - name: zephyr
-      remote: zmk
-      revision: v0.3.0
-      path: zephyr
-
-    - name: zmk-config
-      path: config
+      remote: zmkfirmware
+      revision: main
 
   self:
     path: config
