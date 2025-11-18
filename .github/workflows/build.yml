@@ -32,7 +32,7 @@ jobs:
       - name: Initialize West workspace and update projects
         run: |
           west init .
-          west update --fetch
+          west update -f always
 
       - name: List west_commands directory for diagnostics
         run: ls -la zephyr/scripts/west_commands
