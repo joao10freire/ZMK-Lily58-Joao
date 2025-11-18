@@ -33,7 +33,17 @@ jobs:
         run: |
           echo "--- INITIALIZING WEST WORKSPACE ---"
           west init .
+          # Tenta atualizar os projetos gerenciados por west
           west update
+
+      - name: Manual clone of zmk repo (fallback)
+        run: |
+          if [ ! -d "zmk" ]; then
+            git clone https://github.com/zmkfirmware/zmk.git zmk
+          else
+            echo "Directory zmk already exists"
+          fi
+          ls -la zmk
 
       - name: List directories and files
         run: |
