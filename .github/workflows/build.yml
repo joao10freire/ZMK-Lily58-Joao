@@ -1,69 +1,9 @@
-# name: Build ZMK Firmware
-
-# on:
-#   workflow_dispatch:
-#   push:
-#     branches: [ "main" ]
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout repo
-#         uses: actions/checkout@v4
-#         with:
-#           submodules: recursive
-
-#       - name: Install Nix
-#         uses: cachix/install-nix-action@v25
-#         with:
-#           nix_path: nixpkgs=channel:nixos-24.05
-
-#       - name: Enter devshell
-#         run: nix develop --command echo "ZMK devshell ready."
-
-#       - name: Initialize west workspace
-#         run: |
-#           echo '--- INITIALIZING WEST WORKSPACE ---'
-#           nix develop --command west init -l config
-#           nix develop --command west update
-
-#       - name: Build LEFT side
-#         run: |
-#           echo '--- BUILDING LEFT SIDE ---'
-#           nix develop --command west build \
-#             -s zmk/app \
-#             -b adafruit_feather_nrf52840 \
-#             -d build/left \
-#             -- -DSHIELD=lily58_joao_left -DZMK_CONFIG=$GITHUB_WORKSPACE/config
-
-#       - name: Upload LEFT .uf2
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: lily58_left
-#           path: build/left/zephyr/*.uf2
-
-#       - name: Build RIGHT side
-#         run: |
-#           echo '--- BUILDING RIGHT SIDE ---'
-#           nix develop --command west build \
-#             -s zmk/app \
-#             -b adafruit_feather_nrf52840 \
-#             -d build/right \
-#             -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
-
-#       - name: Upload RIGHT .uf2
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: lily58_right
-#           path: build/right/zephyr/*.uf2
 name: Build ZMK Firmware
 
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -75,5 +15,38 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install Nix
-        uses: cach
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y wget python3-pip ninja-build cmake
+
+      - name: Install West
+        run: pip3 install west
+
+      - name: Initialize West Workspace
+        run: |
+          west init -l config
+          west update
+          west zephyr-export
+
+      - name: Build LEFT side
+        run: |
+          west build -s zmk/app -d build/left -b adafruit_feather_nrf52840 \
+            -- -DSHIELD=lily58_joao_left -DZMK_CONFIG=$GITHUB_WORKSPACE/config
+
+      - name: Upload LEFT artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lily58_left
+          path: build/left/zephyr/*.uf2
+
+      - name: Build RIGHT side
+        run: |
+          west build -s zmk/app -d build/right -b adafruit_feather_nrf52840 \
+            -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
+
+      - name: Upload RIGHT artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lily58_right
+          path: build/right/zephyr/*.uf2
