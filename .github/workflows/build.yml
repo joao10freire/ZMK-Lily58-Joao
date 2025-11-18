@@ -31,9 +31,7 @@ jobs:
 
       - name: Initialize West workspace at root
         run: |
-          echo "--- INITIALIZING WEST WORKSPACE ---"
           west init .
-          # Tenta atualizar os projetos gerenciados por west
           west update
 
       - name: Manual clone of zmk repo (fallback)
@@ -43,7 +41,6 @@ jobs:
           else
             echo "Directory zmk already exists"
           fi
-          ls -la zmk
 
       - name: List directories and files
         run: |
@@ -55,10 +52,15 @@ jobs:
       - name: West list projects
         run: west list
 
+      - name: Setup Zephyr environment
+        run: source zephyr/zephyr-env.sh
+        shell: bash -l {0}
+
       - name: Build LEFT side
         run: |
           west build -s zmk/app -d build/left -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_left -DZMK_CONFIG=$GITHUB_WORKSPACE/config
+        shell: bash -l {0}
 
       - name: Upload LEFT artifact
         uses: actions/upload-artifact@v4
@@ -70,6 +72,7 @@ jobs:
         run: |
           west build -s zmk/app -d build/right -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
+        shell: bash -l {0}
 
       - name: Upload RIGHT artifact
         uses: actions/upload-artifact@v4
