@@ -41,6 +41,7 @@ jobs:
           else
             echo "Directory zmk already exists"
           fi
+          ls -la zmk
 
       - name: List directories and files
         run: |
@@ -52,12 +53,9 @@ jobs:
       - name: West list projects
         run: west list
 
-      - name: Setup Zephyr environment
-        run: source zephyr/zephyr-env.sh
-        shell: bash -l {0}
-
       - name: Build LEFT side
         run: |
+          source zephyr/zephyr-env.sh
           west build -s zmk/app -d build/left -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_left -DZMK_CONFIG=$GITHUB_WORKSPACE/config
         shell: bash -l {0}
@@ -70,6 +68,7 @@ jobs:
 
       - name: Build RIGHT side
         run: |
+          source zephyr/zephyr-env.sh
           west build -s zmk/app -d build/right -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
         shell: bash -l {0}
