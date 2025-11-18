@@ -12,4 +12,4 @@ manifest:
       path: zmk
 
   self:
-    path: config
+    path: .
