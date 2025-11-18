@@ -10,27 +10,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y wget python3-pip ninja-build cmake
+          sudo apt install -y \
+            python3-pip \
+            ninja-build \
+            cmake \
+            g++ \
+            wget \
+            unzip
 
       - name: Install West
         run: pip3 install west
 
-      - name: Initialize West Workspace
+      - name: Initialize West workspace
         run: |
+          echo "--- INITIALIZING WEST WORKSPACE ---"
           west init -l config
           west update
           west zephyr-export
 
       - name: Build LEFT side
         run: |
+          echo "--- BUILDING LEFT SIDE ---"
           west build -s zmk/app -d build/left -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_left -DZMK_CONFIG=$GITHUB_WORKSPACE/config
 
@@ -42,6 +50,7 @@ jobs:
 
       - name: Build RIGHT side
         run: |
+          echo "--- BUILDING RIGHT SIDE ---"
           west build -s zmk/app -d build/right -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
 
