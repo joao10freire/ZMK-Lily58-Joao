@@ -26,15 +26,14 @@ jobs:
             wget \
             unzip
 
-      - name: Install West
-        run: pip3 install west
+      - name: Install West (latest)
+        run: pip3 install --upgrade west
 
       - name: Initialize West workspace
         run: |
           echo "--- INITIALIZING WEST WORKSPACE ---"
           west init -l config
           west update
-          west zephyr-export
 
       - name: Build LEFT side
         run: |
