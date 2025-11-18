@@ -29,22 +29,30 @@ jobs:
       - name: Install West 0.13.0
         run: pip3 install west==0.13.0
 
-      - name: Initialize West workspace
+      - name: Initialize West workspace inside config
         run: |
           echo "--- INITIALIZING WEST WORKSPACE ---"
-          west init -l config
+          cd config
+          west init .
           west update
 
-      - name: West status and help output
+      - name: List directories and files
         run: |
-          west status
-          west help
+          pwd
+          ls -la
+          ls -la config
+          ls -la zmk
 
-      - name: Build LEFT side
+      - name: West list projects
         run: |
-          echo "--- BUILDING LEFT SIDE ---"
-          cd $GITHUB_WORKSPACE
-          west build -s zmk/app -d build/left -b adafruit_feather_nrf52840 \
+          cd config
+          west list
+
+      - name: Build LEFT side inside config
+        run: |
+          pwd
+          cd config
+          west build -s ../zmk/app -d ../build/left -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_left -DZMK_CONFIG=$GITHUB_WORKSPACE/config
 
       - name: Upload LEFT artifact
@@ -53,11 +61,11 @@ jobs:
           name: lily58_left
           path: build/left/zephyr/*.uf2
 
-      - name: Build RIGHT side
+      - name: Build RIGHT side inside config
         run: |
-          echo "--- BUILDING RIGHT SIDE ---"
-          cd $GITHUB_WORKSPACE
-          west build -s zmk/app -d build/right -b adafruit_feather_nrf52840 \
+          pwd
+          cd config
+          west build -s ../zmk/app -d ../build/right -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
 
       - name: Upload RIGHT artifact
