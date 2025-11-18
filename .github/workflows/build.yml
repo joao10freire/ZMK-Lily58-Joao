@@ -26,13 +26,16 @@ jobs:
             wget \
             unzip
 
-      - name: Install West 0.13.0
-        run: pip3 install west==0.13.0
+      - name: Install West latest stable
+        run: pip3 install --upgrade west
 
-      - name: Initialize West workspace at root
+      - name: Initialize West workspace and update projects
         run: |
           west init .
-          west update
+          west update --fetch
+
+      - name: List west_commands directory for diagnostics
+        run: ls -la zephyr/scripts/west_commands
 
       - name: Manual clone of zmk repo (fallback)
         run: |
@@ -41,7 +44,6 @@ jobs:
           else
             echo "Directory zmk already exists"
           fi
-          ls -la zmk
 
       - name: List directories and files
         run: |
@@ -53,7 +55,7 @@ jobs:
       - name: West list projects
         run: west list
 
-      - name: Build LEFT side
+      - name: Build LEFT side with Zephyr environment
         run: |
           source zephyr/zephyr-env.sh
           west build -s zmk/app -d build/left -b adafruit_feather_nrf52840 \
@@ -66,7 +68,7 @@ jobs:
           name: lily58_left
           path: build/left/zephyr/*.uf2
 
-      - name: Build RIGHT side
+      - name: Build RIGHT side with Zephyr environment
         run: |
           source zephyr/zephyr-env.sh
           west build -s zmk/app -d build/right -b adafruit_feather_nrf52840 \
