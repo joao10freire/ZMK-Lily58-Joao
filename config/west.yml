@@ -11,10 +11,5 @@ manifest:
       revision: main
       path: zmk
 
-    - name: zephyr
-      url: https://github.com/zephyrproject-rtos/zephyr
-      revision: v3.5.0
-      import: true
-
   self:
     path: config
