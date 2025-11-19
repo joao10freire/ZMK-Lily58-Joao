@@ -4,8 +4,14 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
+    - name: zephyrproject-rtos
+      url-base: https://github.com/zephyrproject-rtos
 
   projects:
+    - name: zephyr
+      remote: zephyrproject-rtos
+      revision: main
+      path: zephyr
     - name: zmk
       remote: zmkfirmware
       revision: main

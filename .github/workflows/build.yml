@@ -29,6 +29,11 @@ jobs:
       - name: Install West latest stable
         run: pip3 install --upgrade west
 
+      - name: Clean incomplete Zephyr and ZMK folders
+        run: |
+          rm -rf zephyr || true
+          rm -rf zmk || true
+
       - name: Initialize West workspace and update projects
         run: |
           west init .
