@@ -54,6 +54,7 @@ jobs:
         run: |
           pwd
           ls -la
+          ls -la zephyr
           ls -la zmk
           ls -la config
 
@@ -63,6 +64,7 @@ jobs:
       - name: Build LEFT side with Zephyr environment
         run: |
           source zephyr/zephyr-env.sh
+          export ZEPHYR_BASE=$GITHUB_WORKSPACE/zephyr
           west build -s zmk/app -d build/left -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_left -DZMK_CONFIG=$GITHUB_WORKSPACE/config
         shell: bash -l {0}
@@ -76,6 +78,7 @@ jobs:
       - name: Build RIGHT side with Zephyr environment
         run: |
           source zephyr/zephyr-env.sh
+          export ZEPHYR_BASE=$GITHUB_WORKSPACE/zephyr
           west build -s zmk/app -d build/right -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
         shell: bash -l {0}
