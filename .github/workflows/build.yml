@@ -39,8 +39,11 @@ jobs:
           west init .
           west update -f always
 
-      - name: List west_commands directory for diagnostics
-        run: ls -la zephyr/scripts/west_commands
+      - name: Verify Zephyr directory contents
+        run: |
+          ls -la zephyr
+          ls -la zephyr/cmake
+          ls -la zephyr/boards
 
       - name: Manual clone of zmk repo (fallback)
         run: |
@@ -65,6 +68,7 @@ jobs:
         run: |
           source zephyr/zephyr-env.sh
           export ZEPHYR_BASE=$GITHUB_WORKSPACE/zephyr
+          export Zephyr_DIR=$GITHUB_WORKSPACE/zephyr/cmake
           west build -s zmk/app -d build/left -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_left -DZMK_CONFIG=$GITHUB_WORKSPACE/config
         shell: bash -l {0}
@@ -79,6 +83,7 @@ jobs:
         run: |
           source zephyr/zephyr-env.sh
           export ZEPHYR_BASE=$GITHUB_WORKSPACE/zephyr
+          export Zephyr_DIR=$GITHUB_WORKSPACE/zephyr/cmake
           west build -s zmk/app -d build/right -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
         shell: bash -l {0}
