@@ -1,0 +1,9 @@
+include:
+  - board: adafruit_feather_nrf52840
+    shield: lily58_joao_left
+
+  - board: adafruit_feather_nrf52840
+    shield: lily58_joao_right
+
+  - board: adafruit_feather_nrf52840
+    shield: settings_reset

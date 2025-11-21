@@ -1,0 +1,21 @@
+# Lily58 custom shield for ZMK
+
+id: lily58_joao
+name: Lily58 Joao Custom Shield
+type: shield
+
+# O shield possui duas variantes: left e right
+variants:
+  - id: left
+    name: Lily58 Joao (Left)
+    extends: lily58_joao
+    defconfig: lily58_joao_left.conf
+
+  - id: right
+    name: Lily58 Joao (Right)
+    extends: lily58_joao
+    defconfig: lily58_joao_right.conf
+
+# Arquivo comum DTSI que define matrix, pinos, etc.
+include:
+  - lily58_joao.dtsi
