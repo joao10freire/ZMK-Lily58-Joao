@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
           submodules: recursive
@@ -21,74 +21,37 @@ jobs:
           sudo apt install -y \
             python3-pip \
             ninja-build \
-            cmake \
             g++ \
+            cmake \
             wget \
             unzip
 
-      - name: Install West latest stable
-        run: pip3 install --upgrade west
+      - name: Install west
+        run: pip3 install west
 
-      - name: Clean incomplete Zephyr and ZMK folders
+      - name: Initialize west workspace
         run: |
-          rm -rf zephyr || true
-          rm -rf zmk || true
+          west init -l config
+          west update
+          west zephyr-export
 
-      - name: Initialize West workspace and update projects
+      - name: Build LEFT
         run: |
-          west init .
-          west update -f always
-
-      - name: Verify Zephyr directory contents
-        run: |
-          ls -la zephyr
-          ls -la zephyr/cmake
-          ls -la zephyr/boards
-
-      - name: Manual clone of zmk repo (fallback)
-        run: |
-          if [ ! -d "zmk" ]; then
-            git clone https://github.com/zmkfirmware/zmk.git zmk
-          else
-            echo "Directory zmk already exists"
-          fi
-
-      - name: List directories and files
-        run: |
-          pwd
-          ls -la
-          ls -la zephyr
-          ls -la zmk
-          ls -la config
-
-      - name: West list projects
-        run: west list
-
-      - name: Build LEFT side with Zephyr environment
-        run: |
-          source zephyr/zephyr-env.sh
-          export ZEPHYR_BASE=$GITHUB_WORKSPACE/zephyr
-          export Zephyr_DIR=$GITHUB_WORKSPACE/zephyr/cmake
           west build -s zmk/app -d build/left -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_left -DZMK_CONFIG=$GITHUB_WORKSPACE/config
-        shell: bash -l {0}
 
-      - name: Upload LEFT artifact
+      - name: Upload LEFT
         uses: actions/upload-artifact@v4
         with:
           name: lily58_left
           path: build/left/zephyr/*.uf2
 
-      - name: Build RIGHT side with Zephyr environment
+      - name: Build RIGHT
         run: |
-          source zephyr/zephyr-env.sh
-          export ZEPHYR_BASE=$GITHUB_WORKSPACE/zephyr
-          export Zephyr_DIR=$GITHUB_WORKSPACE/zephyr/cmake
           west build -s zmk/app -d build/right -b adafruit_feather_nrf52840 \
             -- -DSHIELD=lily58_joao_right -DZMK_CONFIG=$GITHUB_WORKSPACE/config
-        shell: bash -l {0}
 
-      - name: Upload RIGHT artifact
+      - name: Upload RIGHT
         uses: actions/upload-artifact@v4
         with:
           name: lily58_right
